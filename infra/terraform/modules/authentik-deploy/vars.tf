@@ -14,4 +14,5 @@ variable "authentik_bootstrap_password" {
 }
 variable "authentik_bootstrap_email" {}
 
+variable "ssh_key_id" {}
 

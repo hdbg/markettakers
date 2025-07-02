@@ -1,5 +1,5 @@
 ---
-- name: Test playbook – deploy/update authentik stack
+- name: Deploy authentik
   become: true
   hosts: all
   remote_user: root

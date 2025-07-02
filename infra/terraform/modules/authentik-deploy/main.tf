@@ -6,15 +6,6 @@ provider "hcloud" {
   token = var.hcloud_token
 }
 
-data "local_file" "local_ssh_key" {
-  filename = pathexpand("~/.ssh/id_ed25519.pub")
-}
-
-resource "hcloud_ssh_key" "me" {
-  name       = "laptop-key"
-  public_key = data.local_file.local_ssh_key.content
-}
-
 resource "hcloud_firewall" "authentik" {
   name = "authentik-firewall"
 
@@ -56,7 +47,7 @@ resource "hcloud_server" "authentik-server" {
     ipv6_enabled = true
   }
   ssh_keys     = [hcloud_ssh_key.me.id]
-  firewall_ids = [hcloud_firewall.authentik.id]
+  firewall_ids = [var.ssh_key_id]
 }
 
 resource "random_password" "pg_pass" {
@@ -97,24 +88,9 @@ resource "random_password" "authentik_bootstrap_token" {
   numeric = true
 }
 
-resource "ansible_group" "authentik" {
-  name = "authentik"
-}
-
-resource "ansible_host" "authentik-server" {
-  name   = hcloud_server.authentik-server.ipv4_address
-  groups = [ansible_group.authentik.name]
-
-  variables = {
-    ansible_user = "root"
-  }
-
-}
-
 resource "ansible_playbook" "authentik-cfg" {
   name       = ansible_host.authentik-server.name
   playbook   = "../../../ansible/playbooks/authentik.yml"
-  groups     = [ansible_group.authentik.name] # targets the group, not an IP
   replayable = true
 
   extra_vars = {
@@ -125,7 +101,5 @@ resource "ansible_playbook" "authentik-cfg" {
     authentik_bootstrap_email = var.authentik_bootstrap_email
     authentik_bootstrap_password = var.authentik_bootstrap_password
   }
-
-  verbosity = 5
 }
 

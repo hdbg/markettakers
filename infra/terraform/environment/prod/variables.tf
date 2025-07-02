@@ -13,6 +13,3 @@ variable "authentik_bootstrap_password" {
   sensitive = true
 }
 variable "authentik_bootstrap_email" {}
-
-
-
