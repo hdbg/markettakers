@@ -1,0 +1,9 @@
+---
+collections:
+  - name: cloud.terraform
+
+roles:
+  - name: darkwizard242.lazydocker
+    src: https://github.com/darkwizard242/ansible-role-lazydocker
+  - src: geerlingguy.docker
+

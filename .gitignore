@@ -1,0 +1,33 @@
+*.tfvars
+.terraform/
+# === State files ===
+*.tfstate
+*.tfstate.backup
+
+# === Sensitive variable files ===
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# === Editor/IDE clutter ===
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+*.DS_Store
+*.idea/
+.vscode/
+.env
+.env.*
+
+# === SOPS or GPG encrypted secrets ===
+*.enc.*
+*.gpg
+secrets/
+
+# === OS-level ===
+Thumbs.db
+ehthumbs.db
+Desktop.ini
