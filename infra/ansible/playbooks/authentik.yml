@@ -3,8 +3,8 @@
   become: true
   hosts: all
   remote_user: root
-  # gather_facts: false
-  gather_facts: true
+  gather_facts: false
+  # gather_facts: true
 
   vars:
     docker_install_compose_plugin: true
@@ -19,16 +19,14 @@
     authentik_bootstrap_password: "OVERRIDE ME"
 
     
-  # pre_tasks:
-  #   - name: Wait until the node answers on SSH
-  #     ansible.builtin.wait_for_connection:
-  #       delay: 5                # wait 5 s before the first probe
-  #       timeout: 300            # give it up to 5 min
-  #                               # (module automatically retries)  [oai_citation:0‡docs.ansible.com](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_connection_module.html?utm_source=chatgpt.com)
-  #   - name: Verify SSH connectivity
-  #     ansible.builtin.ping:
-  #   - name: Gather facts manually
-  #     ansible.builtin.setup: 
+  pre_tasks:
+    - name: Wait until the node answers on SSH
+      ansible.builtin.wait_for_connection:
+        delay: 5                # wait 5 s before the first probe
+        timeout: 30            # give it up to 30 s
+                                # (module automatically retries)  [oai_citation:0‡docs.ansible.com](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_connection_module.html?utm_source=chatgpt.com)
+    - name: Gather facts manually
+      ansible.builtin.setup: 
   roles:
     - role: geerlingguy.docker
     - darkwizard242.lazydocker
@@ -63,12 +61,12 @@
         group: root
         mode: '0644'
 
-    - name: restart docker
-      community.docker.docker_compose_v2:
-        project_src: "{{ project_dir }}"
-        state: present 
-        recreate: always
-        pull: always
+    # - name: restart docker
+    #   community.docker.docker_compose_v2:
+    #     project_src: "{{ project_dir }}"
+    #     state: present 
+    #     recreate: always
+    #     pull: always
 
        
   handlers:

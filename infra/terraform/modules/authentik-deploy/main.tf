@@ -1,11 +1,3 @@
-provider "cloudflare" {
-  api_token = var.cloudflare_api_token
-}
-
-provider "hcloud" {
-  token = var.hcloud_token
-}
-
 resource "hcloud_firewall" "authentik" {
   name = "authentik-firewall"
 
@@ -46,8 +38,8 @@ resource "hcloud_server" "authentik-server" {
     ipv4_enabled = true
     ipv6_enabled = true
   }
-  ssh_keys     = [hcloud_ssh_key.me.id]
-  firewall_ids = [var.ssh_key_id]
+  ssh_keys     = [var.ssh_key_id]
+  firewall_ids = [hcloud_firewall.authentik.id]
 }
 
 resource "random_password" "pg_pass" {
@@ -89,7 +81,7 @@ resource "random_password" "authentik_bootstrap_token" {
 }
 
 resource "ansible_playbook" "authentik-cfg" {
-  name       = ansible_host.authentik-server.name
+  name       = hcloud_server.authentik-server.ipv4_address
   playbook   = "../../../ansible/playbooks/authentik.yml"
   replayable = true
 
@@ -101,5 +93,7 @@ resource "ansible_playbook" "authentik-cfg" {
     authentik_bootstrap_email = var.authentik_bootstrap_email
     authentik_bootstrap_password = var.authentik_bootstrap_password
   }
+
+  depends_on = [hcloud_server.authentik-server]
 }
 
