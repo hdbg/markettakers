@@ -14,6 +14,25 @@ resource "authentik_group" "worker" {
   name         = "worker"
 }
 
+data "authentik_brand" "default" {
+  domain = "authentik-default"
+}
+
+resource "authentik_brand" "default" {
+  domain  = "authentik-default"   # ← this is the built-in brand’s domain
+  default = false                 
+  branding_logo = data.authentik_brand.default.branding_logo
+  branding_favicon = data.authentik_brand.default.branding_favicon
+  branding_title = data.authentik_brand.default.branding_title
+}
+
+resource "authentik_brand" "markettakers" {
+  domain         = "."
+  default        = true
+  branding_title = "MarketTakers"
+  branding_logo = "/opt/media/logo.png"
+  branding_favicon = "/opt/media/favicon.ico"
+}
 
 resource "authentik_group" "boss" {
   name         = "boss"

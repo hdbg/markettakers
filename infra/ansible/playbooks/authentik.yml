@@ -32,12 +32,13 @@
     - darkwizard242.lazydocker
 
   tasks:
-    - name: Ensure /opt/authentik exists
+    - name: Ensure dir exists
       notify: Restart compose
       file:
-        path: /opt/authentik/
+        path: "{{ project_dir }}/branding"
         state: directory
         mode: '0755'
+
     - name: Instantiate .env
       notify: Restart compose
       template:
@@ -61,12 +62,23 @@
         group: root
         mode: '0644'
 
-    # - name: restart docker
-    #   community.docker.docker_compose_v2:
-    #     project_src: "{{ project_dir }}"
-    #     state: present 
-    #     recreate: always
-    #     pull: always
+    - name: Copy logo
+      notify: Restart compose
+      copy:
+        force: true
+        src: authentik/logo.png      # Local path (relative to playbook or role)
+        dest: "{{ project_dir }}/media/logo.png"  # Destination on remote host
+        owner: root
+        group: root
+        mode: '0644'
+    - name: Copy favicon
+      notify: Restart compose
+      copy:
+        src: authentik/favicon.ico      # Local path (relative to playbook or role)
+        dest: "{{ project_dir }}/media/favicon.ico"  # Destination on remote host
+        owner: root
+        group: root
+        mode: '0644'   
 
        
   handlers:
