@@ -9,3 +9,13 @@ variable "tailscale_api_key" {
   type        = string
   sensitive   = true
 }
+
+variable "admin_email" {
+  description = "Email address of the admin user"
+  type        = string
+  sensitive = true
+}
+variable "admin_password" {
+  description = "Password for the admin user"
+  type        = string
+}

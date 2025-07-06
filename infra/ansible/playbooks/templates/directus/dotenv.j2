@@ -1,0 +1,45 @@
+PG_PASS={{ pg_pass }}
+ADMIN_EMAIL={{ admin_email }}
+ADMIN_PASSWORD={{ admin_password }}
+
+DIRECTUS_PORT=8080
+
+DB_USER=directus
+DB_PASSWORD=directus
+DB_DATABASE=directus
+
+# Directus Configuration
+DIRECTUS_SECRET={{ directus_secret }}
+
+# Cache Configuration
+CACHE_ENABLED=true
+CACHE_AUTO_PURGE=true
+
+# WebSocket Configuration
+WEBSOCKETS_ENABLED=true
+
+# URL Configuration
+# PUBLIC_URL={{ public_url }}
+
+# CORS Configuration:
+# Development: It's ok to use "*" or "http://localhost:3000" for local testing
+# Production: Specify exact origins like:
+#  - Single origin: "https://your-domain.com"
+#  - Multiple origins: "https://app.domain.com,https://admin.domain.com"
+# Warning: Using "*" in production is a security risk - always specify allowed origins
+CORS_ENABLED=true
+CORS_ORIGIN={{ public_url }}
+
+# Cookie Configuration
+REFRESH_TOKEN_COOKIE_SECURE=false
+REFRESH_TOKEN_COOKIE_SAME_SITE=lax
+REFRESH_TOKEN_COOKIE_DOMAIN={{ public_url }}
+
+SESSION_COOKIE_SECURE=false
+SESSION_COOKIE_SAME_SITE=lax
+SESSION_COOKIE_DOMAIN={{ public_url }}
+
+# Extensions Configuration
+EXTENSIONS_PATH=./extensions
+EXTENSIONS_AUTO_RELOAD=true
+

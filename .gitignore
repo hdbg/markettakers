@@ -3,6 +3,7 @@
 # === State files ===
 *.tfstate
 *.tfstate.backup
+kubeconfig
 
 # === Sensitive variable files ===
 *.tfvars

@@ -11,14 +11,6 @@
     docker_compose_package_state: latest
     project_dir: /opt/authentik
 
-
-    pg_pass: "OVERRIDE ME"
-    ak_secret: "OVERRIDE ME"
-    authentik_bootstrap_token: "OVERRIDE ME"
-    authentik_bootstrap_email: "OVERRIDE ME"
-    authentik_bootstrap_password: "OVERRIDE ME"
-
-    
   pre_tasks:
     - name: Wait until the node answers on SSH
       ansible.builtin.wait_for_connection:
@@ -35,7 +27,7 @@
     - name: Ensure dir exists
       notify: Restart compose
       file:
-        path: "{{ project_dir }}/branding"
+        path: "{{ project_dir }}/media"
         state: directory
         mode: '0755'
 
@@ -83,9 +75,29 @@
        
   handlers:
     - name: Restart compose
-      community.docker.docker_compose_v2:
-        project_src: "{{ project_dir }}"
-        state: present 
-        recreate: always
-        pull: always
+      
+      block:
+        - name: Restart docker compose
+          listen: Restart compose
+          community.docker.docker_compose_v2:
+            project_src: "{{ project_dir }}"
+            state: present 
+            recreate: always
+            pull: always
+        - name: Wait for webserver to return HTTP 200
+          listen: Restart compose
+          vars:
+            url_to_check: "https://{{ domain_name }}"
+          uri:
+            url: "{{ url_to_check }}"
+            method: GET
+            status_code: 200
+            return_content: no
+          register: web_check
+          until: web_check.status == 200
+          retries: 30       # try up to 30 times
+          delay: 5          # wait 5s between attempts
+          timeout: 300      # overall timeout for the task (optional)
+          no_log: false
+
 
