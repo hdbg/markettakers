@@ -11,6 +11,7 @@ kubeconfig
 *.auto.tfvars
 *.auto.tfvars.json
 
+
 # === Editor/IDE clutter ===
 *.swp
 *.swo
@@ -22,6 +23,7 @@ kubeconfig
 .vscode/
 .env
 .env.*
+/directus/
 
 # === SOPS or GPG encrypted secrets ===
 *.enc.*
@@ -32,3 +34,4 @@ secrets/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+node_modules

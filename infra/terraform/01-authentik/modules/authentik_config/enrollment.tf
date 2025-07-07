@@ -58,6 +58,9 @@ resource "authentik_stage_user_write" "create_user" {
   create_users_as_inactive = false
   user_type = "internal"
   user_creation_mode = "always_create"
+
+  create_users_group = authentik_group.steam_employee.id
+
 }
 
 ###############################################################################
@@ -69,6 +72,7 @@ resource "authentik_flow" "default_enrollment" {
   slug        = "default-enrollment"
   designation = "enrollment"
   layout      = "stacked"
+
 }
 
 // acept invite stage

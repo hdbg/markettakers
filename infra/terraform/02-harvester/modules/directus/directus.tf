@@ -88,7 +88,7 @@ resource "authentik_provider_oauth2" "directus" {
   allowed_redirect_uris = [
     {
       matching_mode = "regex",
-      url           = "http://${data.tailscale_device.directus.name}/.*",
+      url           = ".*",
     }
   ]
 
@@ -117,8 +117,10 @@ resource "ansible_playbook" "directus_cfg" {
 
     sso_client_id     = authentik_provider_oauth2.directus.client_id
     sso_client_secret = authentik_provider_oauth2.directus.client_secret
-    sso_issuer_url    = "https://${var.authentik_domain}/application/o/${authentik_provider_oauth2.directus.client_id}/.well-known/openid-configuration"
+    sso_issuer_url    = "https://${var.authentik_domain}/application/o/${authentik_provider_oauth2.directus.client_id}"
   }
+
+  force_handlers = true
 
   depends_on = [harvester_virtualmachine.directus, data.tailscale_device.directus]
 }

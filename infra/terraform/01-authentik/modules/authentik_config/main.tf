@@ -10,8 +10,8 @@ data "authentik_flow" "default_invalidation_flow" {
   slug = "default-invalidation-flow"
 }
 
-resource "authentik_group" "worker" {
-  name = "worker"
+resource "authentik_group" "steam_employee" {
+  name = "Steam Employee"
 }
 
 data "authentik_brand" "default" {
@@ -32,16 +32,16 @@ resource "authentik_brand" "markettakers" {
   domain           = "."
   default          = true
   branding_title   = "MarketTakers"
-  branding_logo    = "./media/logo.png"
-  branding_favicon = "./media/favicon.ico"
+  branding_logo    = "/media/logo.png"
+  branding_favicon = "/media/favicon.ico"
 }
 
 data "authentik_user" "admin" {
   username = "akadmin"
 }
 
-resource "authentik_group" "boss" {
-  name  = "Boss"
+resource "authentik_group" "administrator" {
+  name  = "Administrator"
   users = [data.authentik_user.admin.id]
 
   is_superuser = true

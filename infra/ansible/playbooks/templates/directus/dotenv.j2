@@ -4,6 +4,8 @@ PG_PASS={{ pg_pass }}
 
 DIRECTUS_PORT=80
 
+IP_CUSTOM_HEADER=X-Real-IP
+
 DB_USER=directus
 DB_PASSWORD=directus
 DB_DATABASE=directus
@@ -19,7 +21,7 @@ CACHE_AUTO_PURGE=true
 WEBSOCKETS_ENABLED=true
 
 # URL Configuration
-PUBLIC_URL=http://{{ public_url }}
+PUBLIC_URL=https://{{ public_url }}
 
 # CORS Configuration:
 # Development: It's ok to use "*" or "http://localhost:3000" for local testing
@@ -51,5 +53,4 @@ AUTH_OPENID_CLIENT_ID={{ sso_client_id }}
 AUTH_OPENID_CLIENT_SECRET={{ sso_client_secret }}
 AUTH_OPENID_ISSUER_URL={{ sso_issuer_url }}
 AUTH_OPENID_ALLOW_PUBLIC_REGISTRATION=true
-AUTH_OPENID_ROLE_MAPPING='{"Boss": "Administrator"}'
-
+AUTH_OPENID_SYNC_USER_INFO=true

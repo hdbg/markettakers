@@ -27,10 +27,23 @@ services:
       start_interval: 5s
       start_period: 30s
 
+  caddy:
+    image: caddy:2.10.0
+    restart: unless-stopped
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+      # tailscale creates its socket on /tmp, so we'll kidnap from there to expose to caddy
+      - /var/run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+    ports:
+      - "443:443"
+      - "80:80"
+
   directus:
     image: directus/directus:11.9.2
-    ports:
-      - ${DIRECTUS_PORT}:8055
+    # ports:
+      # - ${DIRECTUS_PORT}:8055
     volumes:
       - ./uploads:/directus/uploads
       - ./extensions:/directus/extensions
@@ -86,3 +99,9 @@ services:
       EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT}
       EMAIL_SMTP_USER: ${EMAIL_SMTP_USER}
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD}
+
+volumes:
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local

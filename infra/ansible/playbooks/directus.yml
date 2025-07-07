@@ -10,6 +10,7 @@
     docker_install_compose_plugin: true
     docker_compose_package_state: latest
     project_dir: /opt/directus
+    role_map_extension: directus-extension-oidc-role-map
 
   pre_tasks:
     - name: Wait until the node answers on SSH
@@ -24,29 +25,77 @@
     - darkwizard242.lazydocker
 
   tasks:
+    # - name: Allow docker user to access tailscaled unix socket
+    #   template:
+    #     dest: /etc/default/tailscaled
+    #     # instead of `src: …` we use `content:`:
+    #     content: |
+    #       TS_PERMIT_CERT_UID=caddy
+
     - name: Ensure dir exists
-      notify: Restart compose
+      notify: "Restart compose"
       file:
-        path: "{{ project_dir }}"
+        path: "{{ project_dir }}/uploads"
         state: directory
-        mode: '0755'
+        mode: '0777'
+
+    - name: Instantiate Caddyfile
+      notify: "Restart compose"
+      template:
+        src: directus/Caddyfile.j2
+        dest: "{{ project_dir }}/Caddyfile"
+        force: true
+
+    - name: Ensure dir exists
+      notify: "Restart compose"
+      file:
+        path: "{{ project_dir }}/extensions/{{ role_map_extension }}"
+        state: directory
+        mode: '0777'
+    
+    - name: Copy extension
+      notify: "Restart compose"
+      copy:
+        src: directus/extensions/{{ role_map_extension }}/dist/      # Local path (relative to playbook or role)
+        dest: "{{ project_dir }}/extensions/{{ role_map_extension }}/dist"  # Destination on remote host
+        owner: root
+        group: root
+        mode: '0777'
+
+    - name: Copy extension
+      notify: "Restart compose"
+      copy:
+        src: directus/extensions/{{ role_map_extension }}/src/      # Local path (relative to playbook or role)
+        dest: "{{ project_dir }}/extensions/{{ role_map_extension }}/src"  # Destination on remote host
+        owner: root
+        group: root
+        mode: '0777'
+
+    - name: Copy extension
+      notify: "Restart compose"
+      copy:
+        src: directus/extensions/{{ role_map_extension }}/package.json      # Local path (relative to playbook or role)
+        dest: "{{ project_dir }}/extensions/{{ role_map_extension }}/"  # Destination on remote host
+        owner: root
+        group: root
+        mode: '0777'
 
     - name: Instantiate .env
-      notify: Restart compose
+      notify: "Restart compose"
       template:
         src: directus/dotenv.j2
         dest: "{{ project_dir }}/.env"
         force: true
 
     - name: Instantiate Caddyfile
-      notify: Restart compose
+      notify: "Restart compose"
       template:
         src: directus/Caddyfile.j2
         dest: "{{ project_dir }}/Caddyfile"
         force: true
 
     - name: Copy docker-compose.yml
-      notify: Restart compose
+      notify: "Restart compose"
       copy:
         src: directus/docker-compose.yml      # Local path (relative to playbook or role)
         dest: "{{ project_dir }}/docker-compose.yml"  # Destination on remote host
@@ -55,7 +104,7 @@
         mode: '0644'
        
   handlers:
-    - name: Restart compose
+    - name: "Restart compose"
       community.docker.docker_compose_v2:
         project_src: "{{ project_dir }}"
         state: present 

@@ -1,5 +1,5 @@
 {
-	"name": "oidc-role-map",
+	"name": "directus-extension-oidc-role-map",
 	"description": "Please enter a description for your extension",
 	"icon": "extension",
 	"version": "1.0.0",
@@ -15,7 +15,7 @@
 	"directus:extension": {
 		"type": "hook",
 		"path": "dist/index.js",
-		"source": "src/index.ts",
+		"source": "src/index.js",
 		"host": "^10.10.0"
 	},
 	"scripts": {
@@ -25,11 +25,9 @@
 		"validate": "directus-extension validate"
 	},
 	"devDependencies": {
-		"@directus/extensions-sdk": "14.0.0",
-		"@types/node": "^24.0.10",
-		"typescript": "^5.8.3"
+		"@directus/extensions-sdk": "14.0.0"
 	},
 	"dependencies": {
-		"jwt-decode": "^4.0.0"
+		"@directus/errors": "^2.0.2"
 	}
 }
