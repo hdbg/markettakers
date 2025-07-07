@@ -76,6 +76,10 @@ data "authentik_flow" "default_invalidation_flow" {
 }
 
 
+locals {
+  tailscale_authentik_redirect_url = data.tailscale_device.directus.name != null ? "https://${data.tailscale_device.directus.name}/.*" : ".*"
+}
+
 resource "authentik_provider_oauth2" "directus" {
   depends_on = [harvester_virtualmachine.directus, data.tailscale_device.directus]
 
@@ -88,7 +92,7 @@ resource "authentik_provider_oauth2" "directus" {
   allowed_redirect_uris = [
     {
       matching_mode = "regex",
-      url           = ".*",
+      url           = local.tailscale_authentik_redirect_url,
     }
   ]
 
