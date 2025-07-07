@@ -19,3 +19,9 @@ variable "admin_password" {
   description = "Password for the admin user"
   type        = string
 }
+
+variable "authentik_domain" {
+  description = "URL of the Authentik instance"
+  type        = string
+  
+}

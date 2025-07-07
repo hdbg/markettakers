@@ -20,3 +20,8 @@ variable "admin_password" {
   type        = string
   sensitive   = true
 }
+
+variable "authentik_domain" {
+  description = "URL of the Authentik instance"
+  type        = string
+}

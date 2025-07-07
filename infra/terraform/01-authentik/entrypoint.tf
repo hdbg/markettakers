@@ -15,8 +15,8 @@ resource "hcloud_ssh_key" "prod" {
   public_key = data.local_file.local_ssh_key.content
 }
 
-module "authentik-deployment" {
-  source = "./modules/authentik-deploy"
+module "authentik_deploy" {
+  source = "./modules/authentik_deploy"
 
   providers = {
     hcloud     = hcloud
@@ -34,15 +34,20 @@ module "authentik-deployment" {
 
 provider "authentik" {
   url   = "https://${var.domain_name}"
-  token = module.authentik-deployment.authentik_token
+  token = module.authentik_deploy.authentik_token
 }
 
-module "authentik-config" {
-  source = "./modules/authentik-config"
+module "authentik_config" {
+  source = "./modules/authentik_config"
 
   providers = {
     authentik = authentik
   }
 
-  depends_on = [module.authentik-deployment]
+  depends_on = [module.authentik_deploy]
+}
+
+output "authentik_token" {
+  value     = module.authentik_deploy.authentik_token
+  sensitive = true
 }

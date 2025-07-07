@@ -16,7 +16,20 @@ provider "helm" {
   }
 }
 
+data "terraform_remote_state" "previous_state" {
+  backend = "local"
+  config = {
+    path = "../01-authentik/terraform.tfstate"
+  }
+}
+
+provider "authentik" {
+  url = "https://${var.authentik_domain}"
+  token = data.terraform_remote_state.previous_state.outputs.authentik_token
+}
+
 resource "tailscale_acl" "as_json" {
+  overwrite_existing_content = true
   acl = jsonencode({
     acls : [
       {
@@ -55,10 +68,13 @@ module "directus" {
   providers = {
     tailscale  = tailscale
     harvester  = harvester
+    authentik = authentik
   }
 
   admin_email = var.admin_email
   admin_password = var.admin_password
   fedora_cloud_42_image       = module.harvester-init.fedora_cloud_42_image
   cloud_init_service_secret   = module.harvester-init.cloud_init_service_secret
+
+  authentik_domain = var.authentik_domain
 }

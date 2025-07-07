@@ -17,6 +17,7 @@ resource "helm_release" "tailscale_operator" {
   timeout          = 600
 
   atomic = true
+  force_update = true
 
   set = [
     {
