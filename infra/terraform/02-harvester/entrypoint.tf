@@ -78,3 +78,18 @@ module "directus" {
 
   authentik_domain = var.authentik_domain
 }
+
+module "outline" {
+  source = "./modules/outline"
+
+  providers = {
+    tailscale  = tailscale
+    harvester  = harvester
+    authentik = authentik
+  }
+
+  fedora_cloud_42_image       = module.harvester-init.fedora_cloud_42_image
+  cloud_init_service_secret   = module.harvester-init.cloud_init_service_secret
+
+  authentik_domain = var.authentik_domain
+}

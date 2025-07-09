@@ -1,0 +1,64 @@
+---
+- name: Deploy outline
+  become: true
+  hosts: all
+  remote_user: fedora
+  gather_facts: false
+  # gather_facts: true
+
+  vars:
+    docker_install_compose_plugin: true
+    docker_compose_package_state: latest
+    project_dir: /opt/outline
+
+  pre_tasks:
+    - name: Wait until the node answers on SSH
+      ansible.builtin.wait_for_connection:
+        delay: 5                # wait 5 s before the first probe
+        timeout: 30            # give it up to 30 s
+                                # (module automatically retries)  [oai_citation:0‡docs.ansible.com](https://docs.ansible.com/ansible/latest/collections/ansible/builtin/wait_for_connection_module.html?utm_source=chatgpt.com)
+    - name: Gather facts manually
+      ansible.builtin.setup: 
+  roles:
+    - role: geerlingguy.docker
+    - darkwizard242.lazydocker
+
+  tasks:
+    - name: Ensure dir exists
+      notify: "Restart compose"
+      file:
+        path: "{{ project_dir }}"
+        state: directory
+        mode: '0777'
+
+    - name: Instantiate Caddyfile
+      notify: "Restart compose"
+      template:
+        src: outline/Caddyfile.j2
+        dest: "{{ project_dir }}/Caddyfile"
+        force: true
+
+    - name: Instantiate .env
+      notify: "Restart compose"
+      template:
+        src: outline/dotenv.j2
+        dest: "{{ project_dir }}/.env"
+        force: true
+
+    - name: Copy docker-compose.yml
+      notify: "Restart compose"
+      copy:
+        src: outline/docker-compose.yml      # Local path (relative to playbook or role)
+        dest: "{{ project_dir }}/docker-compose.yml"  # Destination on remote host
+        owner: root
+        group: root
+        mode: '0644'
+       
+  handlers:
+    - name: "Restart compose"
+      community.docker.docker_compose_v2:
+        project_src: "{{ project_dir }}"
+        state: present 
+        recreate: always
+        pull: always
+

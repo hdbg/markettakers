@@ -10,22 +10,13 @@ resource "authentik_stage_prompt_field" "username" {
   order = 0
 }
 
-resource "authentik_stage_prompt_field" "email" {
-  name      = "enroll-email"
-  field_key = "email"
-  label     = "Your e-mail address"
-  type      = "email"
-  required  = true
-  order = 1
-}
-
 resource "authentik_stage_prompt_field" "password" {
   name      = "enroll-password"
   field_key = "password"
   label     = "Create a password"
   type      = "password"
   required  = true
-  order = 2
+  order = 1
 }
 
 resource "authentik_stage_prompt_field" "password_confirm" {
@@ -34,8 +25,32 @@ resource "authentik_stage_prompt_field" "password_confirm" {
   label     = "Confirm password"
   type      = "password"
   required  = true
-  order = 3
+  order = 2
 }
+
+################################################################################
+# Show new user email
+################################################################################
+resource "authentik_stage_prompt_field" "email_field" {
+  name = "enroll-show-user-email-field"
+  field_key                                = "user_email"
+  label                                    = "Your email address"
+  type                                     = "text_read_only"
+  required                                 = true
+  initial_value_expression                  = true
+  initial_value                            = <<-EOT
+    return f"{request.context['prompt_context']['username']}@${var.domain_name}"
+    EOT
+  order                                    = 0
+}
+resource "authentik_stage_prompt" "show_email" {
+  name = "show-user-email"
+  fields = [
+    authentik_stage_prompt_field.email_field.id,
+  ]
+}
+
+
 
 ###############################################################################
 # 2. Single Prompt stage containing all four fields
@@ -44,7 +59,6 @@ resource "authentik_stage_prompt" "signup_prompt" {
   name   = "signup-all-fields"
   fields = [
     authentik_stage_prompt_field.username.id,
-    authentik_stage_prompt_field.email.id,
     authentik_stage_prompt_field.password.id,
     authentik_stage_prompt_field.password_confirm.id,
   ]
@@ -102,6 +116,14 @@ resource "authentik_flow_stage_binding" "bind_user_write" {
   stage  = authentik_stage_user_write.create_user.id
   order  = 2
 }
+
+resource "authentik_flow_stage_binding" "bind_show_email" {
+  target = authentik_flow.default_enrollment.uuid
+  stage  = authentik_stage_prompt.show_email.id
+  order  = 3
+}
+
+
 
 ###############################################################################
 # 6. Policy that blocks authenticated users

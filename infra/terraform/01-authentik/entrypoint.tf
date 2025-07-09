@@ -44,6 +44,8 @@ module "authentik_config" {
     authentik = authentik
   }
 
+  domain_name = var.domain_name
+
   depends_on = [module.authentik_deploy]
 }
 

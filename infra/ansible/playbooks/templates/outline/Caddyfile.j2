@@ -1,0 +1,8 @@
+{{ public_url }} {
+	# -- Reverse proxy to Authentik -------------------
+	reverse_proxy outline:3000 
+	
+	log {
+		level DEBUG
+	}
+}

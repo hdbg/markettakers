@@ -1,0 +1,59 @@
+NODE_ENV=production
+
+# This URL should point to the fully qualified, publicly accessible, URL. If using a
+# proxy this will be the proxy's URL.
+URL={{ public_url }}
+
+# The port to expose the Outline server on, this should match what is configured
+# in your docker-compose.yml
+PORT=3000
+
+CDN_URL=
+WEB_CONCURRENCY=1
+SECRET_KEY={{ secret_key }}
+UTILS_SECRET={{ utils_secret }}
+DEFAULT_LANGUAGE=en_US
+DATABASE_URL=postgres://user:pass@postgres:5432/outline
+DATABASE_CONNECTION_POOL_MIN=
+DATABASE_CONNECTION_POOL_MAX=
+PGSSLMODE=disable
+REDIS_URL=redis://redis:6379
+FILE_STORAGE=local
+FILE_STORAGE_LOCAL_ROOT_DIR=/var/lib/outline/data
+FILE_STORAGE_UPLOAD_MAX_SIZE=262144000
+FILE_STORAGE_IMPORT_MAX_SIZE=
+FILE_STORAGE_WORKSPACE_IMPORT_MAX_SIZE=
+
+FORCE_HTTPS=false
+
+# DOCS: https://docs.getoutline.com/s/hosting/doc/oidc-8CPBm6uC0I
+OIDC_CLIENT_ID={{ sso_client_id }}
+OIDC_CLIENT_SECRET={{ sso_client_secret }}
+OIDC_AUTH_URI={{ sso_auth_uri }}
+OIDC_TOKEN_URI={{ sso_token_uri }}
+OIDC_USERINFO_URI={{ sso_userinfo_uri }}
+OIDC_LOGOUT_URI={{ sso_logout_uri }}
+OIDC_USERNAME_CLAIM=preferred_username
+OIDC_DISPLAY_NAME=OIDC
+OIDC_SCOPES=openid profile email
+
+# Whether the rate limiter is enabled or not
+RATE_LIMITER_ENABLED=true
+RATE_LIMITER_REQUESTS=1000
+RATE_LIMITER_DURATION_WINDOW=60
+
+# ––––––––––––––––––––––––––––––––––––––
+# –––––––––––––  DEBUGGING  ––––––––––––
+# ––––––––––––––––––––––––––––––––––––––
+
+# Have the installation check for updates by sending anonymized statistics to
+# the maintainers
+ENABLE_UPDATES=true
+
+# Debugging categories to enable – you can remove the default "http" value if
+# your proxy already logs incoming http requests and this ends up being duplicative
+DEBUG=http
+
+# Configure lowest severity level for server logs. Should be one of
+# error, warn, info, http, verbose, debug, or silly
+LOG_LEVEL=info
